@@ -21,6 +21,10 @@ var Config = struct {
 	DB struct {
 		URL string `default:"127.0.0.1" env:"db_url"`
 	}
+	Lights struct {
+		Sensors   string `default:"127.0.0.1:8080" env:"lights_sensors"`
+		Actuators string `default:"127.0.0.1:" env:"lights_actuators"`
+	}
 }{}
 
 func main() {
