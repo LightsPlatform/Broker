@@ -7,11 +7,10 @@
  * | File Name:     main.go
  * +===============================================
  */
+
 package main
 
 import (
-	"log"
-
 	"github.com/jinzhu/configor"
 	log "github.com/sirupsen/logrus"
 	mgo "gopkg.in/mgo.v2"
