@@ -18,3 +18,8 @@ func New(id string) *Group {
 		sensors: make([]Sensor, 0),
 	}
 }
+
+// Add adds new sensor into group
+func (g *Group) Add(s Sensor) {
+	g.sensors = append(g.sensors, s)
+}
