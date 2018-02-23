@@ -134,6 +134,25 @@ func groupDataHandler(c *gin.Context) {
 }
 
 func groupSensorHandler(c *gin.Context) {
+	id := c.Param("id")
+
+	var r struct {
+		Name string `json:"name" binding:"required"`
+	}
+
+	if err := c.BindJSON(&r); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	g, ok := groups[id]
+	if !ok {
+		c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("There is no group named %s", id)})
+	}
+	g.Add(group.Sensor(r.Name))
+
+	c.JSON(http.StatusOK, g)
+
 }
 
 func groupListHandler(c *gin.Context) {
