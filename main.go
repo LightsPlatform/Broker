@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"github.com/LightsPlatform/Broker/group"
+	"github.com/LightsPlatform/vSensor/sensor"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/configor"
 	log "github.com/sirupsen/logrus"
@@ -37,6 +38,8 @@ var groups map[string]*group.Group
 func init() {
 	groups = make(map[string]*group.Group)
 }
+
+var lightsDB *mgo.Database
 
 // handle registers apis and create http handler
 func handle() http.Handler {
@@ -76,6 +79,8 @@ func main() {
 
 	// Optional. Switch the session to a monotonic behavior.
 	session.SetMode(mgo.Monotonic, true)
+
+	lightsDB = session.DB("lights")
 
 	fmt.Println("vBroker Light @ 2018")
 
@@ -121,6 +126,14 @@ func groupCreateHandler(c *gin.Context) {
 	}
 
 	g := group.New(r.Name)
+	g.OnData = func(ds []sensor.Data) {
+		c := lightsDB.C(r.Name)
+
+		for _, d := range ds {
+			c.Insert(d)
+		}
+	}
+	go g.Run()
 	groups[r.Name] = g
 
 	c.JSON(http.StatusOK, g)
