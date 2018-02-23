@@ -152,7 +152,7 @@ func groupDataHandler(c *gin.Context) {
 		return
 	}
 
-	if err := lightsDB.C(id).Find(bson.M{}).Limit(limit).All(&results); err != nil {
+	if err := lightsDB.C(id).Find(bson.M{}).Sort("-time").Limit(limit).All(&results); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
