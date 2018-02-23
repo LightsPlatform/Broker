@@ -23,7 +23,7 @@ type Group struct {
 	ID      string
 	Sensors []Sensor
 
-	OnData func(data []sensor.Data)
+	OnData func(data []sensor.Data) `json:"-"`
 
 	end chan int
 }
