@@ -144,7 +144,7 @@ func groupCreateHandler(c *gin.Context) {
 func groupDataHandler(c *gin.Context) {
 	var results []bson.M
 
-	id := c.Param("thingid")
+	id := c.Param("id")
 
 	limit, err := strconv.Atoi(c.Query("limit"))
 	if err != nil {
