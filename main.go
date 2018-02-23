@@ -30,10 +30,6 @@ var Config = struct {
 	DB struct {
 		URL string `default:"127.0.0.1" env:"db_url"`
 	}
-	Lights struct {
-		Sensors   string `default:"127.0.0.1:8080" env:"lights_sensors"`
-		Actuators string `default:"127.0.0.1" env:"lights_actuators"`
-	}
 }{}
 
 var groups map[string]*group.Group
@@ -138,6 +134,7 @@ func groupSensorHandler(c *gin.Context) {
 
 	var r struct {
 		Name string `json:"name" binding:"required"`
+		URL  string `json:"url" binding:"required"`
 	}
 
 	if err := c.BindJSON(&r); err != nil {
@@ -149,7 +146,10 @@ func groupSensorHandler(c *gin.Context) {
 	if !ok {
 		c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("There is no group named %s", id)})
 	}
-	g.Add(group.Sensor(r.Name))
+	g.Add(group.Sensor{
+		ID:  r.Name,
+		URL: r.URL,
+	})
 
 	c.JSON(http.StatusOK, g)
 
