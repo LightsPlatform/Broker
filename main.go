@@ -16,6 +16,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"time"
 
 	"github.com/LightsPlatform/Broker/group"
@@ -24,6 +25,7 @@ import (
 	"github.com/jinzhu/configor"
 	log "github.com/sirupsen/logrus"
 	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 // Config represents main configuration
@@ -140,6 +142,21 @@ func groupCreateHandler(c *gin.Context) {
 }
 
 func groupDataHandler(c *gin.Context) {
+	var results []bson.M
+
+	id := c.Param("thingid")
+
+	limit, err := strconv.Atoi(c.Query("limit"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := lightsDB.C(id).Find(bson.M{}).Limit(limit).All(&results); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+
+	c.JSON(http.StatusOK, results)
 }
 
 func groupSensorHandler(c *gin.Context) {
